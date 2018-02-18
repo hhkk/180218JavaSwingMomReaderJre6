@@ -380,7 +380,7 @@ public class KeyIn extends JFrame
     }
 
 
-    // hi hbk 2
+    // hi hbk 3 5 
 
     public static String getClipboardContents() {
         String result = "";
