@@ -380,9 +380,11 @@ public class KeyIn extends JFrame
     }
 
 
+    // hi hbk 2
+
     public static String getClipboardContents() {
         String result = "";
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         //odd: the Object param of getContents is not currently used
         Transferable contents = clipboard.getContents(null);
         boolean hasTransferableText =
