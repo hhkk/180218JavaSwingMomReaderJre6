@@ -1,6 +1,6 @@
-// run this one for christine reader
-
 package events;
+// run this for christine reader
+
 // /Users/hkon/utd/170729grails/180112JavaSwingMomReader/src/events/KeyIn.java
 // /Users/hkon/utd/170729grails/180112JavaSwingMomReader
 
@@ -25,6 +25,7 @@ public class KeyIn extends JFrame
 {
     JTextArea jTextArea;
     static JTextField jTextField;
+    static JTextField jTextField2;
     static String copyBuf = "";
     private static JLabel jLabel;
     private static JLabel keyEventLabel;
@@ -120,12 +121,18 @@ public class KeyIn extends JFrame
                 //System.out.println("focus:" + (new java.util.Date()).toString());
                 copyBufList = new ArrayList( Arrays.asList( getClipboardContents().trim().split(" ")));
 
+
                 // BIG UPPER PART
                 jTextField.setText("jTextField:" + copyBufList.get(indexWordShown));
                 jTextField.setCaretPosition(0);
 
+                jTextField2.setText("jTextField2:" + copyBufList.get(indexWordShown));
+                jTextField2.setCaretPosition(0);
+
+
                 // SMALL LOWER PART
                 jLabel.setText("jlabel:" + getClipboardContents().trim());
+
 
 
                 // TODO Auto-generated method stub
@@ -176,6 +183,7 @@ public class KeyIn extends JFrame
         button.addActionListener(this);
 
         jTextField = new JTextField(20);
+        jTextField2 = new JTextField(20);
 
 
         int sz1 = Integer.parseInt((appProps.get("fontsize")).toString());
@@ -232,6 +240,7 @@ public class KeyIn extends JFrame
         //getContentPane().add(new JScrollPane(jTextField), BorderLayout.PAGE_START);
         // 1111111111111111
         getContentPane().add(jTextField, BorderLayout.PAGE_START);
+        getContentPane().add(jTextField2, BorderLayout.PAGE_END);
         JScrollPane scrollPanehkLabel = new JScrollPane(jLabel);
         // 2222222222222222
         getContentPane().add(scrollPanehkLabel, BorderLayout.CENTER);
