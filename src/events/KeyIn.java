@@ -190,6 +190,7 @@ public class KeyIn extends JFrame
         System.out.print("fontsize:" + appProps.get("fontsize"));
         float sz = 200;
         jTextField.setFont(new Font("Arial", Font.BOLD, sz1));// big font 500 600 700 800
+        jTextField2.setFont(new Font("Arial", Font.BOLD, sz1));// big font 500 600 700 800
         Font font = jTextField.getFont();
         font = font.deriveFont(
                 Collections.singletonMap(
