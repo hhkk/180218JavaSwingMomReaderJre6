@@ -1,34 +1,31 @@
 package events;
 // run this for christine reader
 
-// /Users/hkon/utd/170729grails/180112JavaSwingMomReader/src/events/KeyIn.java
+// /Users/hkon/utd/170729grails/180112JavaSwingMomReader/src/events/KeyInJFrame.java
 // /Users/hkon/utd/170729grails/180112JavaSwingMomReader
+
+import events.clipboard.HKClipboard;
+import events.components.ArrayJTextFields;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
-import java.awt.font.TextAttribute;
-import java.io.IOException;
 import java.util.ArrayList;
-//import java.util.Arrays;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 import javax.swing.*;
 
 
 //https://www.excelsior-usa.com/articles/java-to-exe.html
 
-public class KeyIn extends JFrame
+public class KeyInJFrame extends JFrame
         implements KeyListener,
-        ActionListener, ClipboardOwner
+        ClipboardOwner
 {
-    JTextArea jTextArea;
-    static JTextField jTextField;
-    static JTextField jTextField2;
-    static String copyBuf = "";
+
+    private static ArrayJTextFields arrayJTextFields;
+    private static int iWordIndexLastShown = -1;
     private static JLabel jLabel;
-    private static JLabel keyEventLabel;
     static final String newline = ";"; // System.getProperty("line.separator");
     static int indexWordShown = 0;
     static java.util.List<String> copyBufList = null;
@@ -36,7 +33,7 @@ public class KeyIn extends JFrame
     public void lostOwnership(Clipboard clipboard, Transferable contents){}
     ;
 
-    public static Properties appProps = HKProps.getProperties(0);
+    public static Properties appProps = AppProps.getProperties(0);
 
     public static void main(String[] args) {
         System.out.print("appProps.size()appProps.size():" + appProps.size());
@@ -76,17 +73,25 @@ public class KeyIn extends JFrame
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        KeyIn frame = new KeyIn();
+        KeyInJFrame frame = new KeyInJFrame();
+
+        frame.setPreferredSize(new Dimension(1600,1000));
+        frame.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        arrayJTextFields = new ArrayJTextFields(
+                AppProps.getNumLines(),
+                AppProps.getFontSize(),
+                AppProps.getNumCharactersPerLine(),
+                AppProps.getNumCharactersPerLine()
+        );
+        arrayJTextFields.addArrayJTextFields ( frame.getContentPane() );
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Set up the content pane.
-        frame.addComponentsToPane();
-
 
         frame.addWindowStateListener(new WindowStateListener() {
             @Override
             public void windowStateChanged(WindowEvent e) {
-                //JOptionPane.showMessageDialog(myself,
+                //JOptionPane.showMessageDialog(frame.getContentPane(),
                 //"Eggs are not supposed to be green.");
                 // TODO Auto-generated method stub
                 if((e.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED){
@@ -118,20 +123,15 @@ public class KeyIn extends JFrame
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 indexWordShown = 0;
-                //System.out.println("focus:" + (new java.util.Date()).toString());
-                copyBufList = new ArrayList( Arrays.asList( getClipboardContents().trim().split(" ")));
+                copyBufList = new ArrayList( Arrays.asList( HKClipboard.getClipboardContents().trim().split(" ")));
 
+
+                iWordIndexLastShown = arrayJTextFields.fillPage(copyBufList, iWordIndexLastShown+1);
 
                 // BIG UPPER PART
-                jTextField.setText("jTextField:" + copyBufList.get(indexWordShown));
-                jTextField.setCaretPosition(0);
-
-                jTextField2.setText("jTextField2:" + copyBufList.get(indexWordShown));
-                jTextField2.setCaretPosition(0);
-
 
                 // SMALL LOWER PART
-                jLabel.setText("jlabel:" + getClipboardContents().trim());
+                //jLabel.setText("zzjlabel:" + HKClipboard.class(). trim());
 
 
 
@@ -177,84 +177,48 @@ public class KeyIn extends JFrame
         frame.setVisible(true);
     }
 
-    private void addComponentsToPane() {
-
-        JButton button = new JButton("Font Bigger");
-        button.addActionListener(this);
-
-        jTextField = new JTextField(20);
-        jTextField2 = new JTextField(20);
-
-
-        int sz1 = Integer.parseInt((appProps.get("fontsize")).toString());
-        System.out.print("fontsize:" + appProps.get("fontsize"));
-        float sz = 200;
-        jTextField.setFont(new Font("Arial", Font.BOLD, sz1));// big font 500 600 700 800
-        jTextField2.setFont(new Font("Arial", Font.BOLD, sz1));// big font 500 600 700 800
-        Font font = jTextField.getFont();
-        font = font.deriveFont(
-                Collections.singletonMap(
-                        TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
-        jTextField.setFont(font);
-
-// To help Christine read on the computer I created this program.
-
-
-        jTextField.addKeyListener(this);
-
-        //Uncomment this if you wish to turn off focus
-        //traversal.  The focus subsystem consumes
-        //focus traversal keys, such as Tab and Shift Tab.
-        //If you uncomment the following line of code, this
-        //disables focus traversal and the Tab events will
-        //become available to the key event listener.
-        //jTextField.setFocusTraversalKeysEnabled(false);
-
-
-//        JLabel label = new JLabel("First Name");
-//        label.setFont(new Font("Courier New", Font.ITALIC, 300));
-//        label.setForeground(Color.GRAY);
+//    private void addComponentsToPane() {
 //
-//        frame.add(label);
-
-
-
-
-        jLabel = new JLabel();
-        jLabel.setText("jLabel");
-        jLabel.setFont(new Font("Courier New", Font.ITALIC, 50));
-
-        Font font2 = jLabel.getFont();
-        font2 = font2.deriveFont(
-                Collections.singletonMap(
-                        TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
-        jLabel.setFont(font2);
-
-
-        jTextArea = new JTextArea();
-        jTextArea.setEditable(false);
-        jTextArea.setText("hi mom!");
-        jTextArea.setFont(new Font("Arial", Font.BOLD, 200));
-        JScrollPane scrollPane = new JScrollPane(jTextArea);
-        scrollPane.setPreferredSize(new Dimension(1200, 400));
-
-        //getContentPane().add(new JScrollPane(jTextField), BorderLayout.PAGE_START);
-        // 1111111111111111
-        getContentPane().add(jTextField, BorderLayout.PAGE_START);
-        getContentPane().add(jTextField2, BorderLayout.PAGE_END);
-        JScrollPane scrollPanehkLabel = new JScrollPane(jLabel);
-        // 2222222222222222
-        getContentPane().add(scrollPanehkLabel, BorderLayout.CENTER);
-        //getContentPane().add(scrollPane, BorderLayout.CENTER);
-        keyEventLabel = new JLabel();
-        keyEventLabel.setText("keyEventLabel");
-        // 3333333333333333333
-        //getContentPane().add(new JScrollPane(keyEventLabel), BorderLayout.SOUTH);
-        keyEventLabel.setFont(new Font("Arial", Font.ITALIC, 50));
-
-        // 4444444444444
-        getContentPane().add(button, BorderLayout.EAST);
-    }
+//
+//        JButton button = new JButton("Font Bigger");
+//        button.addActionListener(getComponentPane());
+//
+//
+//        int sz1 = Integer.parseInt((appProps.get("fontsize")).toString());
+//        System.out.print("fontsize:" + appProps.get("fontsize"));
+//        float sz = 200;
+//
+//        jTextField.addKeyListener(this);
+//
+//        jLabel = new JLabel();
+//        jLabel.setText("jLabelaaaa");
+//        jLabel.setFont(new Font("Courier New", Font.ITALIC, 50));
+//
+//        Font font2 = jLabel.getFont();
+//        font2 = font2.deriveFont(
+//                Collections.singletonMap(
+//                        TextAttribute.WEIGHT, TextAttribute.WEIGHT_EXTRABOLD));
+//        jLabel.setFont(font2);
+//
+//
+//        jTextArea = new JTextArea();
+//        jTextArea.setEditable(false);
+//        jTextArea.setText("hi mom!");
+//        jTextArea.setFont(new Font("Arial", Font.BOLD, 200));
+//        JScrollPane scrollPane = new JScrollPane(jTextArea);
+//        scrollPane.setPreferredSize(new Dimension(1200, 400));
+//
+//        //getContentPane().add(new JScrollPane(jTextField), BorderLayout.PAGE_START);
+//        // 1111111111111111
+//        JScrollPane scrollPanehkLabel = new JScrollPane(jLabel);
+//        // 2222222222222222
+//        getContentPane().add(scrollPanehkLabel, BorderLayout.CENTER);
+//        //getContentPane().add(scrollPane, BorderLayout.CENTER);
+//
+//
+//        // 4444444444444
+//        getContentPane().add(button, BorderLayout.EAST);
+//    }
 
 
 
@@ -263,33 +227,30 @@ public class KeyIn extends JFrame
     public void keyTyped(KeyEvent e) {
 //aaa
         displayInfo(e, "KEY TYPED: ");
-
         //System.out.print("asdasdasd");
-
-
     }
 
     /** Handle the key pressed event from the text field. */
     public void keyPressed(KeyEvent e) {
-        displayInfo(e, "KEY PRESSED: ");
-        if (e.getKeyCode() == 38) {
-            // up arrow
-            //            JOptionPane.showMessageDialog(this,
-            //                    "down arrow");
-            indexWordShown = java.lang.Math.max(0, indexWordShown-1);
-            jTextField.setText(copyBufList.get(indexWordShown));
-            jTextField.setCaretPosition(0);
-        }
-        else if (e.getKeyCode() == 40) {
-            // down arrow
-            //            JOptionPane.showMessageDialog(this,
-            //                    "down arrow");
-            indexWordShown = java.lang.Math.min(copyBufList.size()-1, indexWordShown+1);
-            jTextField.setText(copyBufList.get(indexWordShown));
-            jTextField.setCaretPosition(0);
-        }
-
-
+//        displayInfo(e, "KEY PRESSED: ");
+//        if (e.getKeyCode() == 38) {
+//            // up arrow
+//            //            JOptionPane.showMessageDialog(this,
+//            //                    "down arrow");
+//            indexWordShown = java.lang.Math.max(0, indexWordShown-1);
+//            jTextField.setText(copyBufList.get(indexWordShown));
+//            jTextField.setCaretPosition(0);
+//        }
+//        else if (e.getKeyCode() == 40) {
+//            // down arrow
+//            //            JOptionPane.showMessageDialog(this,
+//            //                    "down arrow");
+//            indexWordShown = java.lang.Math.min(copyBufList.size()-1, indexWordShown+1);
+//            jTextField.setText(copyBufList.get(indexWordShown));
+//            jTextField.setCaretPosition(0);
+//        }
+//
+//
 
         //System.out.print("asdasdasd");
         // JOptionPane.showMessageDialog(this,
@@ -304,33 +265,6 @@ public class KeyIn extends JFrame
         //  JOptionPane.showMessageDialog(this,
         //        "Eggs are not supposed to be green.");
         //displayInfo(e, "KEY RELEASED: ");
-    }
-
-    /** Handle the clear button click. */
-    public void actionPerformed(ActionEvent e) {
-
-        //JOptionPane.showMessageDialog(this,
-        //       "Eggs are not supposed to be green.");
-        //Clear the text components.
-        // ccc
-
-        //jTextArea.setText("");
-        //jTextField.setText("");
-
-//        Font font2 = jTextArea.getFont();
-//        font2 = font2.deriveFont(
-//                Collections.singletonMap(
-//                        TextAttribute.SIZE, TextAttribute.SIZE));
-//        jTextArea.setFont(font2);
-
-        // dddddd
-        jTextField.setFont(jTextField.getFont().deriveFont(new Float(jTextField.getFont().getSize()+50).floatValue()));
-        //jTextField.setFont(jTextField.getFont().deriveFont(50f));
-
-
-
-        //Return the focus to the typing area.
-        jTextField.requestFocusInWindow();
     }
 
     /*
@@ -387,14 +321,8 @@ public class KeyIn extends JFrame
             locationString += "unknown";
         }
 
-//        jTextArea.append(keyStatus + newline
-//                + "    " + keyString + newline
-//                + "    " + modString + newline
-//                + "    " + actionString + newline
-//                + "    " + locationString + newline);
-//        jTextArea.setCaretPosition(jTextArea.getDocument().getLength());
 
-        keyEventLabel.setText(keyStatus + newline
+        System.out.println(keyStatus + newline
                 + "    " + keyString + newline
                 + "    " + modString + newline
                 + "    " + actionString + newline
@@ -402,32 +330,6 @@ public class KeyIn extends JFrame
     }
 
 
-    // hi hbk 3 5
-
-    public static String getClipboardContents() {
-        String result = "";
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        //odd: the Object param of getContents is not currently used
-        Transferable contents = clipboard.getContents(null);
-        boolean hasTransferableText =
-                (contents != null) &&
-                        contents.isDataFlavorSupported(DataFlavor.stringFlavor)
-                ;
-        if (hasTransferableText) {
-            try {
-                result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-            }
-            catch (UnsupportedFlavorException ex){
-                System.out.println(ex);
-                ex.printStackTrace();
-            }
-            catch (IOException ex){
-                System.out.println(ex);
-                ex.printStackTrace();
-            }
-        }
-        return result;
-    }
 
 
 
