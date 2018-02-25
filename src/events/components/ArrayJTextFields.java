@@ -2,6 +2,7 @@ package events.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class ArrayJTextFields {
     List <JTextField> arrayJTextFields;
     int numCharactersPerLine;
 
-    public ArrayJTextFields (int numlines, int fontsize, int numCharactersPerLine, int verticalLineSpacing) {
+    public ArrayJTextFields (int numlines, int fontsize, int numCharactersPerLine, int verticalLineSpacing, KeyListener keyListener) {
 
         arrayJTextFields = new ArrayList<JTextField>(numlines);
         this.numCharactersPerLine = numCharactersPerLine;
@@ -22,9 +23,10 @@ public class ArrayJTextFields {
             arrayJTextFields.add(new JTextField(30));
             JTextField jTextField = arrayJTextFields.get(i);
             jTextField.setPreferredSize(new Dimension(1,fontsize + verticalLineSpacing));
-            jTextField.setFont(new Font("Arial", Font.BOLD, fontsize));// big font 500 600 700 800
+            jTextField.setFont(new Font("Courier New", Font.BOLD, fontsize));// big font 500 600 700 800
             //jTextField.setText("jTextField:" + i);
             jTextField.setCaretPosition(0);
+            jTextField.addKeyListener(keyListener);
         }
     }
 
@@ -62,7 +64,7 @@ public class ArrayJTextFields {
     public int fillPage(List<String> copyBufList , int iWordIndexToStartWith) {
 
         int iWordIndexLastShown = iWordIndexToStartWith;
-        String delimeter = "   ";
+        String delimeter = "  ";
 
         for (int i = 0; i < arrayJTextFields.size(); i++)
         {

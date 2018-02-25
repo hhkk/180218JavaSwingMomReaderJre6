@@ -30,13 +30,12 @@ public class KeyInJFrame extends JFrame
     static int indexWordShown = 0;
     static java.util.List<String> copyBufList = null;
 
-    public void lostOwnership(Clipboard clipboard, Transferable contents){}
-    ;
+    public void lostOwnership(Clipboard clipboard, Transferable contents){};
 
     public static Properties appProps = AppProps.getProperties(0);
 
     public static void main(String[] args) {
-        System.out.print("appProps.size()appProps.size():" + appProps.size());
+        o("appProps.size()appProps.size():" + appProps.size());
         /* Use an appropriate Look and Feel */
         try {
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -82,7 +81,8 @@ public class KeyInJFrame extends JFrame
                 AppProps.getNumLines(),
                 AppProps.getFontSize(),
                 AppProps.getNumCharactersPerLine(),
-                AppProps.getNumCharactersPerLine()
+                AppProps.getNumCharactersPerLine(),
+                frame
         );
         arrayJTextFields.addArrayJTextFields ( frame.getContentPane() );
 
@@ -98,7 +98,7 @@ public class KeyInJFrame extends JFrame
 
                 }
                 else if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
-                    System.out.println("Maximized");
+                    o("Maximized");
 
                     //scaleButtons();
                     //maximized = true;
@@ -140,7 +140,7 @@ public class KeyInJFrame extends JFrame
 
                 }
                 else if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
-                    System.out.println("Maximized");
+                    o("Maximized");
 
                     //scaleButtons();
                     //maximized = true;
@@ -155,12 +155,12 @@ public class KeyInJFrame extends JFrame
                 //   JOptionPane.showMessageDialog(myself,
                 //         "Eggs are not supposed to be green2.");
                 // TODO Auto-generated method stub
-                System.out.print("LOSTFOCUS");
+                o("LOSTFOCUS");
                 if((e.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED){
 
                 }
                 else if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
-                    System.out.println("Maximized");
+                    o("Maximized");
 
                     //scaleButtons();
                     //maximized = true;
@@ -170,6 +170,7 @@ public class KeyInJFrame extends JFrame
                 }
             }
         });
+        frame.addKeyListener(frame);
 
 
         //Display the window.
@@ -232,33 +233,28 @@ public class KeyInJFrame extends JFrame
 
     /** Handle the key pressed event from the text field. */
     public void keyPressed(KeyEvent e) {
-//        displayInfo(e, "KEY PRESSED: ");
-//        if (e.getKeyCode() == 38) {
-//            // up arrow
-//            //            JOptionPane.showMessageDialog(this,
-//            //                    "down arrow");
-//            indexWordShown = java.lang.Math.max(0, indexWordShown-1);
-//            jTextField.setText(copyBufList.get(indexWordShown));
-//            jTextField.setCaretPosition(0);
-//        }
-//        else if (e.getKeyCode() == 40) {
-//            // down arrow
-//            //            JOptionPane.showMessageDialog(this,
-//            //                    "down arrow");
-//            indexWordShown = java.lang.Math.min(copyBufList.size()-1, indexWordShown+1);
-//            jTextField.setText(copyBufList.get(indexWordShown));
-//            jTextField.setCaretPosition(0);
-//        }
-//
-//
+        displayInfo(e, "KEY PRESSED: ");
+        if (e.getKeyCode() == 38) {
+            // up arrow
+            //            JOptionPane.showMessageDialog(this,
+            //                    "down arrow");
+            //indexWordShown = java.lang.Math.max(0, indexWordShown - 1);
+            //jTextField.setText(copyBufList.get(indexWordShown));
+            //jTextField.setCaretPosition(0);
+        } else if (e.getKeyCode() == 40) {
+            // down arrow
+            //            JOptionPane.showMessageDialog(this,
+            //                    "down arrow");
+            o ("downarrow event");
+            iWordIndexLastShown = arrayJTextFields.fillPage(copyBufList, iWordIndexLastShown + 1);
 
-        //System.out.print("asdasdasd");
-        // JOptionPane.showMessageDialog(this,
-        //       "Eggs are not supposed to be green.");
+            //System.out.print("asdasdasd");
+            // JOptionPane.showMessageDialog(this,
+            //       "Eggs are not supposed to be green.");
 
-        //displayInfo(e, "KEY PRESSED: ");
+            //displayInfo(e, "KEY PRESSED: ");
+        }
     }
-
     /** Handle the key released event from the text field. */
     public void keyReleased(KeyEvent e) {
 
@@ -322,7 +318,7 @@ public class KeyInJFrame extends JFrame
         }
 
 
-        System.out.println(keyStatus + newline
+        o(keyStatus + newline
                 + "    " + keyString + newline
                 + "    " + modString + newline
                 + "    " + actionString + newline
@@ -330,7 +326,11 @@ public class KeyInJFrame extends JFrame
     }
 
 
-
+    private static int callCount = 1;
+    private static void o(String s)
+    {
+        System.out.println(callCount++ + ". " + new java.util.Date() + ":" + s);
+    }
 
 
 }
